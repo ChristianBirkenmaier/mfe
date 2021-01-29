@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import { createMemoryHistory, createBrowserHistory } from "history";
 
-const mount = (el, { onNavigate, defaultHistory, initialPath }) => {
+const mount = (el, { onNavigate, defaultHistory, initialPath, onSignIn }) => {
     // When running in isolation, we're using a sperate browserhistory object,
     // when running as a child of container, we're using a memoryhistory object which works together
     // with the containers own browser history object
@@ -17,10 +17,11 @@ const mount = (el, { onNavigate, defaultHistory, initialPath }) => {
         history.listen(onNavigate);
     }
 
-    ReactDOM.render(<App history={history} />, el);
+    ReactDOM.render(<App history={history} onSignIn={onSignIn} />, el);
 
     return {
         onParentNavigate({ pathname: nextPathname }) {
+            console.log(nextPathname);
             const { pathname } = history.location;
             if (pathname !== nextPathname) {
                 history.push(nextPathname);
@@ -30,7 +31,7 @@ const mount = (el, { onNavigate, defaultHistory, initialPath }) => {
 };
 
 if (process.env.NODE_ENV === "development") {
-    const devRoot = document.querySelector("#__marketing-dev-root");
+    const devRoot = document.querySelector("#__auth-dev-root");
     if (devRoot) {
         // If we're running Marketing in isolation, we're providing a BrwoserHistory object
         // so that navigating around is easier (url updates)
